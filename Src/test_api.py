@@ -110,7 +110,7 @@ if __name__ == '__main__':
     s = s
     plt.plot(s)
     plt.show()
-    harmonics = Api.harmonics_change(s, 44000, window='rect')
+    harmonics = Api.harmonics_change(s, 44000, window='hamming')
     print(harmonics)
 
     k = 0.2
@@ -118,32 +118,35 @@ if __name__ == '__main__':
     w = 5
     f0 = harmonics['Harmonic0']['Frequency']
     t0 = np.array(harmonics['Harmonic0']['Time'])
-    A0 = harmonics['Harmonic0']['Amplitude']            # / max(harmonics['Harmonic0']['Amplitude'])
+    A0 = harmonics['Harmonic0']['Amplitude'] / max(harmonics['Harmonic0']['Amplitude'])
     N0 = len(harmonics['Harmonic0']['Amplitude'])
     f1 = harmonics['Harmonic1']['Frequency']
     t1 = np.array(harmonics['Harmonic1']['Time'])
-    A1 = harmonics['Harmonic1']['Amplitude']            # / max(harmonics['Harmonic1']['Amplitude'])
+    A1 = harmonics['Harmonic1']['Amplitude'] / max(harmonics['Harmonic1']['Amplitude'])
     N1 = len(harmonics['Harmonic1']['Amplitude'])
     f2 = harmonics['Harmonic2']['Frequency']
     t2 = np.array(harmonics['Harmonic2']['Time'])
-    A2 = harmonics['Harmonic2']['Amplitude']            # / max(harmonics['Harmonic2']['Amplitude'])
+    A2 = harmonics['Harmonic2']['Amplitude'] / max(harmonics['Harmonic2']['Amplitude'])
     N2 = len(harmonics['Harmonic2']['Amplitude'])
 
     print(t0.shape)
 
+    orig0 = np.exp(ke * t0) / max(np.exp(ke * t0))
+    orig1 = 0.5 * np.ones(t1.shape) / max(0.5 * np.ones(t1.shape))
+    orig2 = 2 * abs(np.sin(w*t2)) * k * t2 / max(2 * abs(np.sin(w*t2)) * k * t2)
 
     plt.subplot(3, 1, 1)
     plt.ylabel(f0)
     plt.plot(t0, A0)                                # Extraction
-    plt.plot(t0, np.exp(ke * t0))                   # Original
+    plt.plot(t0, orig0)                             # Original
     plt.subplot(3, 1, 2)
     plt.ylabel(f1)
     plt.plot(t1, A1)                                # Extraction
-    plt.plot(t1, 0.5 * np.ones(t1.shape))           # Original
+    plt.plot(t1, orig1)                             # Original
     plt.ylim(0.4, 0.6)
     plt.subplot(3, 1, 3)
     plt.ylabel(f2)
     plt.plot(t2, A2)                                # Extraction
-    plt.plot(t2, 2 * abs(np.sin(w*t2)) * k * t2)    # Original
+    plt.plot(t2, orig2)                             # Original
     plt.show()
     # unittest.main()
