@@ -8,7 +8,7 @@ from scipy.interpolate import splev, splrep     # For making Spectrum smoother
 # This function returns dictionary with
 # Frequencies and amplitudes of harmonics
 # (works good for rect and bad for all other)
-def harmonics_extraction(sound_array, Fs):
+def harmonics_extraction(sound_array, Fs, plots='yes'):
     """
     The functions takes harmonics of signal
     It work based on Furie Transform and scipy
@@ -34,9 +34,19 @@ def harmonics_extraction(sound_array, Fs):
     '''
 
     # Find FFT
+    # Because of formatting m4a --> wav spectrum may be copied
+    # So, optionally S may be divided twice
+
     Spectrum = 2 * abs(np.fft.fft(sound_array)) / N
     Spectrum = Spectrum[:round(N / 2)]
+
+    # Optionally
+    Spectrum = Spectrum[:round(N / 4)]
     Spectrum = Spectrum
+    '''
+    plt.plot(Spectrum)
+    plt.show()
+    '''
 
 
     '''
@@ -58,10 +68,10 @@ def harmonics_extraction(sound_array, Fs):
     # Minimal freq distance: 5Hz
     # Minimal prominence:    1%
     # Minimal height:        0.09
-    min_freq_dist = 60                                                                           # Hz
+    min_freq_dist = 10                                                                           # Hz
     min_index_dist = round((min_freq_dist / (Fs/2)) * (N/2)) # FOR INTERPOLATION   * interp_m    # Index
-    min_prominence = 0.25       # 0.25
-    min_height = 0.1    # , height=min_height
+    min_prominence = 0.55       # 0.25
+    min_height = 5    # , height=min_height (0.2)
     if min_index_dist < 1:
         min_index_dist = 1
 
@@ -71,26 +81,27 @@ def harmonics_extraction(sound_array, Fs):
     f_peaks = Fs * peaks / N  # FOR INTERPOLATION  /interp_m
     a_peaks = Spectrum[peaks]
 
-    """
-    # Show result of extraction
-    dt = 1 / Fs
-    T = N * dt
-    t = np.linspace(0, T, N)
-    plt.figure(tight_layout='True')
-    plt.subplot(2, 1, 1)
-    plt.title("Result of Harmonics extraction")
-    plt.plot(t, sound_array)
-    plt.xlabel("t, s")
-    plt.ylabel("Signal")
 
-    freq_interp = Fs * freq_index / N  # Hz
-    plt.subplot(2, 1, 2)
-    plt.plot(freq_interp, Spectrum)
-    plt.plot(f_peaks, Spectrum[peaks], "x")
-    plt.xlabel("F, Hz")
-    plt.ylabel("Spectrum")
-    plt.show()
-    """
+    if plots=='yes':
+        # Show result of extraction
+        dt = 1 / Fs
+        T = N * dt
+        t = np.linspace(0, T, N)
+        plt.figure(tight_layout='True')
+        plt.subplot(2, 1, 1)
+        plt.title("Result of Harmonics extraction")
+        plt.plot(t, sound_array)
+        plt.xlabel("t, s")
+        plt.ylabel("Signal")
+
+        freq_interp = Fs * freq_index / N  # Hz
+        plt.subplot(2, 1, 2)
+        plt.plot(freq_interp[:len(Spectrum)], Spectrum)
+        plt.plot(f_peaks, Spectrum[peaks], "x")
+        plt.xlabel("F, Hz")
+        plt.ylabel("Spectrum")
+        plt.xlim((0, 1500))
+        plt.show()
 
     harmonics = {}
     for i in range(len(f_peaks)):
@@ -132,7 +143,7 @@ def harmonics_extraction_zero_support(sound_array, Fs, k, window):
     sound_array_support = np.zeros(round(k * len(sound_array)))
     sound_array_support[0:len(sound_array)] = k * sound_array[:]
 
-    harmonics = harmonics_extraction(sound_array_support, Fs)
+    harmonics = harmonics_extraction(sound_array_support, Fs, plots='no')
     return harmonics
 
 def harmonics_change(sound_array, Fs, window):
@@ -148,9 +159,21 @@ def harmonics_change(sound_array, Fs, window):
             -- 'hamming'
     :return: time dependencies of each harmonic
     """
-    length_short_signal = 1100          # int(len(sound_array)/220)
-    count_short_signal = int(np.ceil(len(sound_array) / length_short_signal))
-    signals_matrix = np.reshape(sound_array, (count_short_signal, length_short_signal))
+
+    # Add zero support to be divided by @length_short_signal@ !!!
+    short_L = 1500  # int(len(sound_array)/220)
+
+    thousand = short_L - len(sound_array) % short_L
+    zero_support = [0] * thousand
+
+    list_sound_array = list(sound_array)
+    list_sound_array += zero_support
+    sound_array = np.array(list_sound_array)
+
+    ##########################################################################################
+
+    count_short_signal = int(np.ceil(len(sound_array) / short_L))
+    signals_matrix = np.reshape(sound_array, (count_short_signal, short_L))
 
     T = 5
     k = 60
