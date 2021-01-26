@@ -11,7 +11,7 @@ print(os.listdir(d))
 
 # Загрузить без ffmpeg можно только аудио .wav
 # Другие форматы запустить не удалось
-audio = AudioSegment.from_wav('Guitar\\Sound2.wav')
+audio = AudioSegment.from_wav("../Guitar/Sound2_edit.wav") # '../Guitar/Sound.wav'
 Fs = audio.frame_rate
 data = np.asarray(audio.get_array_of_samples())
 N = data.size

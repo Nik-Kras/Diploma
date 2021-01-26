@@ -116,17 +116,17 @@ def harmonics_extraction_zero_support(sound_array, Fs, k, window):
     :return: dictionary with frequencies and its amplitudes
     """
     N = len(sound_array)
+    w = 1
     if window == "triangle":
-        trig = triang(N)
-        sound_array = sound_array*trig
+        w = triang(N)
     elif window == "hamming":
-        hamm = hamming(N)
-        sound_array = sound_array * hamm
+        w = hamming(N)
     elif window =='hann':
-        hann = hanning(N)
-        sound_array = sound_array * hann
+        w = hanning(N)
     elif window != "rect":
         print("Not correct window name!\nWill use rect!")
+
+    sound_array = sound_array * w
 
     # If "rect" - use just it
     sound_array_support = np.zeros(round(k * len(sound_array)))

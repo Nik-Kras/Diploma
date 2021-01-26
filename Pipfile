@@ -9,6 +9,7 @@ verify_ssl = true
 numpy = "*"
 matplotlib = "*"
 scipy = "*"
+pydub = "*"
 
 [requires]
 python_version = "3.8"

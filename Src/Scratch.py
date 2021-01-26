@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.signal import triang
+import scipy.signal as s
 from scipy.signal import find_peaks             # For harmonics extraction from spectrum
 from scipy.interpolate import interp1d          # For making Spectrum smoother
 from scipy.interpolate import splev, splrep     # For making Spectrum smoother
@@ -117,7 +117,7 @@ def test_signal_changing():
     return signal
 
 # N = 100
-s = triang(51)
+s = s.triang(51)
 plt.plot(s)
 plt.show()
 

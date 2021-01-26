@@ -11,7 +11,7 @@ from scipy.signal import find_peaks
 # And returns numpy.ndarrays
 # Contained of frequencies and its harmonics aplitudes
 # Range of spectrum where peaks are interesting limited by Fmax (Hz)
-def audio_to_peaks(Path='Guitar\\Sound2.wav', Fmax=1500):
+def audio_to_peaks(Path='../Guitar/Sound2_edit.wav', Fmax=1500):
     # Загрузить без ffmpeg можно только аудио .wav
     # Другие форматы запустить не удалось
     audio = AudioSegment.from_wav(Path)
@@ -70,13 +70,13 @@ def audio_to_peaks(Path='Guitar\\Sound2.wav', Fmax=1500):
     '''
     return f_peaks, a_peaks
 
-from music21 import * ## ---------- Library for musical notes
+# from music21 import * ## ---------- Library for musical notes
 
 # This function takes an arrays of frequencies and its amplitudes
 # And returns a notes, that causes such spectrum of harmonics
 def peaks_to_notes(f_peaks, a_peaks):
 
-    AllNotes = dict{"C": []}
+    AllNotes = dict({"C": []})
 
     return 0
 
