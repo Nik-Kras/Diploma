@@ -1,12 +1,5 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from pydub import AudioSegment
-import json
-
 from Src import Api as api
-
-import os
-os.walk("..")
 
 Path = '../Guitar'
 file = '/new/Гитара в разных местах.wav'

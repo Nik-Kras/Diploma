@@ -8,7 +8,7 @@ from scipy.interpolate import splev, splrep     # For making Spectrum smoother
 # This function returns dictionary with
 # Frequencies and amplitudes of harmonics
 # (works good for rect and bad for all other)
-def harmonics_extraction(sound_array, Fs, plots='yes'):
+def harmonics_extraction(sound_array, Fs, plots='yes', plot_Fmax = 1500, plot_Fmin = 0):
     """
     The functions takes harmonics of signal
     It work based on Furie Transform and scipy
@@ -42,26 +42,11 @@ def harmonics_extraction(sound_array, Fs, plots='yes'):
 
     # Optionally
     Spectrum = Spectrum[:round(N / 4)]
+    freq_index = np.linspace(0, round(N / 4), round(N / 4))
     Spectrum = Spectrum
     '''
     plt.plot(Spectrum)
     plt.show()
-    '''
-
-
-    '''
-    # Make spectrum smooth (Optional)
-    
-    # B-spline (OR)
-    interp_m = 10
-    freq_interp_index = np.linspace(0, round(N / 2), round(N / 2) * interp_m)  # Index
-    interp_fun = splrep(freq_index, Spectrum)
-    Spectrum = splev(freq_interp_index, interp_fun)
-
-    # Cubic-spine (OR)
-    interp_fun = interp1d(freq_index, Spectrum, kind='cubic')
-    Spectrum = interp_fun(freq_interp_index)
-    
     '''
 
     # Config harmonics search
@@ -76,9 +61,8 @@ def harmonics_extraction(sound_array, Fs, plots='yes'):
         min_index_dist = 1
 
     # Find harmonics
-    # peaks, _ = find_peaks(Spectrum, distance=min_index_dist, prominence=min_prominence, height=min_height)
     peaks, _ = find_peaks(Spectrum, distance=min_index_dist, prominence=min_prominence, height=min_height)
-    f_peaks = Fs * peaks / N  # FOR INTERPOLATION  /interp_m
+    f_peaks = Fs * peaks / N
     a_peaks = Spectrum[peaks]
 
 
@@ -86,6 +70,7 @@ def harmonics_extraction(sound_array, Fs, plots='yes'):
         # Show result of extraction
         dt = 1 / Fs
         T = N * dt
+        T = T/2                     # IDK why, but time is twice bigger than it should be, so I divide it
         t = np.linspace(0, T, N)
         plt.figure(tight_layout='True')
         plt.subplot(2, 1, 1)
@@ -100,7 +85,7 @@ def harmonics_extraction(sound_array, Fs, plots='yes'):
         plt.plot(f_peaks, Spectrum[peaks], "x")
         plt.xlabel("F, Hz")
         plt.ylabel("Spectrum")
-        plt.xlim((0, 1500))
+        plt.xlim((plot_Fmin, plot_Fmax))
         plt.show()
 
     harmonics = {}
