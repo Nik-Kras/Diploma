@@ -23,16 +23,6 @@ def harmonics_extraction(sound_array, Fs, plots='yes', plot_Fmax = 1500, plot_Fm
     N = len(sound_array)
     freq_index = np.linspace(0, round(N / 2), round(N / 2))
 
-    '''
-    # Show sound
-    dt = 1/Fs
-    T = N*dt
-    t = np.linspace(0, T, N)
-    fig = plt.figure()
-    plt.plot(t, sound_array)
-    plt.show()
-    '''
-
     # Find FFT
     # Because of formatting m4a --> wav spectrum may be copied
     # So, optionally S may be divided twice
@@ -44,10 +34,6 @@ def harmonics_extraction(sound_array, Fs, plots='yes', plot_Fmax = 1500, plot_Fm
     Spectrum = Spectrum[:round(N / 4)]
     freq_index = np.linspace(0, round(N / 4), round(N / 4))
     Spectrum = Spectrum
-    '''
-    plt.plot(Spectrum)
-    plt.show()
-    '''
 
     # Config harmonics search
     # Minimal freq distance: 5Hz
@@ -56,7 +42,7 @@ def harmonics_extraction(sound_array, Fs, plots='yes', plot_Fmax = 1500, plot_Fm
     min_freq_dist = 10                                                                           # Hz
     min_index_dist = round((min_freq_dist / (Fs/2)) * (N/2)) # FOR INTERPOLATION   * interp_m    # Index
     min_prominence = 0.55       # 0.25
-    min_height = 5    # , height=min_height (0.2)
+    min_height = 25    # height=min_height (0.2)
     if min_index_dist < 1:
         min_index_dist = 1
 
@@ -71,6 +57,7 @@ def harmonics_extraction(sound_array, Fs, plots='yes', plot_Fmax = 1500, plot_Fm
         dt = 1 / Fs
         T = N * dt
         T = T/2                     # IDK why, but time is twice bigger than it should be, so I divide it
+                                    # Because I sent 2 channels in one array. Is is needed to be fixed
         t = np.linspace(0, T, N)
         plt.figure(tight_layout='True')
         plt.subplot(2, 1, 1)
