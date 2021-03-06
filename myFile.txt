@@ -1,0 +1,2 @@
+note_1,note_2,octave_1,octave_2,duration_1,duration_2
+E,F,Первая,Большая,1/16,1/4
