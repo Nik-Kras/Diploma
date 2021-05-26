@@ -7,6 +7,8 @@ path1 = path + "\Sasha\Steinway Grand Piano 70.wav";
 [y, Fs] = audioread(path1);
 z = y(:,1);
 
+clear y
+
 NFFT = floor(NFFT);
 N_zero = Fs - NFFT;     % Кол-во нулей после вырезки. Я буде для частотного шага 1Гц
 N = floor(2/(NFFT/Fs)); % Количество вырезок за 2 секунды
@@ -66,7 +68,7 @@ YTrain = Y(trainInds);
 XTest = X(testInds,:);
 YTest = Y(testInds);
 
-clear X z
+clear X Y z
 
 [STest, MTest] = size(XTest);
 [STrain, MTrain] = size(XTrain);
@@ -80,17 +82,19 @@ XTrain_ds = zeros([STrain, length(vtrain)]);
 % Get Spectrum. There is no need to get whole spectrum, It can be divided
 % by half or more. ds - specifies how spectrum will be divided.
 XTest_spec = abs(fft(XTest'))';
+clear XTest 
 XTrain_spec = abs(fft(XTrain'))';
+clear XTrain
 
 % Get only one part of spectrum, only important samples
 XTest_ds(:, vtest) = XTest_spec(:, vtest);
 XTrain_ds(:, vtest) = XTrain_spec(:, vtest);
 
+clear XTest_spec XTrain_spec vtest vtrain
+
 % Normalization of data
 XTest_ds = XTest_ds ./ sum(XTest_ds, 2);
 XTrain_ds = XTrain_ds ./ sum(XTrain_ds, 2);
-
-clear XTest XTrain
 
 mean_M = zeros([NOTES 8 12]);
 std_M = zeros([NOTES 8 12]);
